@@ -1,6 +1,6 @@
-animals,Lion,Zebra,Elephant,Bird,Tiger,Panda,Komodo Dragon
-sports,Basketball,Soccer,Football,Badminton,Volleyball,Golf,
-fruits,Banana,Orange,Apple,Strawberry,Mango,
-zwierzeta, lew, zebra, slon, ptak, tygrys, panda, waran komodo
-sporty, koszykowka, pilka nozna, badminton, siatkowka, golf
-owoce, banan, pomarancza, jablko, truskawka, mango, malina
+animals,Cat,Bird,Unicorn,Panda,Girafee,Lion,Camel,Fox,Monkey,Rhinoceeros,Bison,Hippopotamus,Rabbit,Squirrel,Polar Bear,Kangaroo,Donkey,Crocodile
+sports,Archery,Boxing,Cricket,Basketball,Baseball,Rugby,Figure Skating,Ice Hockey,Jogging,Gymnastics,Horse Racing,Football,Volleyball,Tennis,Swimming
+fruits,Apple,Avocado,Banana,Blackberry,Grape,Papaya,Orange,Nectarine,Strawberry,Watermelon,Pineapple,Plum,Raspberry,Blueberry,Lemon,Peach,Mango,Coconut,Cherry,Tangerine
+zwierzeta,Kot,Ptak,Jednorozec,Panda,Zyrafa,Lew,Wielblad,Lis,Malpa,Nosorozec,Bizon,Hipopotam,Krolik,Wiewiorka,Niedzwiedz Polarny,Kangur,Osiol,Krokodyl
+sporty,Lucznictwo,Boks,Krykiet,Koszykowka,Baseball,Rugby,Lyzwiarstwo Figurowe,Hokej Na Lodzie,Jogging,Gimnastyka,Wyscigi Konne,Pilka Nozna,Siatkowka,Tenis,Plywactwo
+owoce,Jablko,Awokado,Banan,Jezyna,Winogrono,Papaja,Pomarancza,Nektarynka,Truskawka,Arbuz,Ananas,Sliwka,Malina,Cytryna,Brzoskwinia,Mango,Kokos,Wisnia,Mandarynka
