@@ -18,7 +18,7 @@ public class CustomTools {
         }
         return null;
     }
-
+    // updates jlabel with image from string path
     public static void updateImage(JLabel imageContainer, String resource){
         BufferedImage image;
         try {
@@ -41,7 +41,5 @@ public class CustomTools {
         }
         return hiddenWord;
     }
-
-
 
 }

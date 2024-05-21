@@ -1,6 +1,9 @@
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class Hangman extends JFrame implements ActionListener {
@@ -31,18 +34,26 @@ public class Hangman extends JFrame implements ActionListener {
     public static String language = "English";
     public JButton englishButton;
     public JButton polishButton;
+    public JButton categoryOnButton;
+    public JButton categoryOffButton;
+    private JLabel backgroundLabel = new JLabel();
+
+
 
 
 
 
     public Hangman() {
         super("Hangman Game");
+        backgroundLabel.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("resources/background.jpg"))));
+        setContentPane(backgroundLabel);
         setSize(CommonConstants.FRAME_SIZE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
         setLayout(null);
         setResizable(true);
-        getContentPane().setBackground(CommonConstants.BACKGROUND_COLOR);
+//        getContentPane().setBackground(Color.GREEN);
 
         // initializing values
         wordDataBase = new WordDataBase();
@@ -57,10 +68,11 @@ public class Hangman extends JFrame implements ActionListener {
         // this method has to be moved there, to load the new challenge only after the play button is pressed so the language actually plays a role
         wordChallange = wordDataBase.loadChallange();
 
+        UIManager.put("Button.disabledText", new ColorUIResource(Color.WHITE));
 
 
         hangmanImage = CustomTools.loadImage(CommonConstants.IMAGE_PATH);
-        hangmanImage.setBounds(0, 0, hangmanImage.getPreferredSize().width, hangmanImage.getPreferredSize().height);
+        hangmanImage.setBounds(475, 0, 1000, 600);
         getContentPane().add(hangmanImage);
 
         // category
@@ -70,23 +82,21 @@ public class Hangman extends JFrame implements ActionListener {
         categoryLabel.setForeground(Color.WHITE);
         categoryLabel.setBackground(CommonConstants.BACKGROUND_COLOR);
         categoryLabel.setBorder(BorderFactory.createLineBorder(CommonConstants.SECONDARY_COLOR));
-        categoryLabel.setBounds(0, hangmanImage.getPreferredSize().height + 10, CommonConstants.FRAME_SIZE.width,
+        categoryLabel.setBounds(480, hangmanImage.getPreferredSize().height + 10, 960,
                 categoryLabel.getPreferredSize().height);
-
         getContentPane().add(categoryLabel);
 
-        if (diff == "Hard"){
-            categoryLabel.setVisible(false);
-        }
 
         // hidden word
         hiddenWordLabel = new JLabel(CustomTools.hideWord(wordChallange[1]));
         hiddenWordLabel.setForeground(Color.WHITE);
-        hiddenWordLabel.setBounds(0, categoryLabel.getY() + categoryLabel.getPreferredSize().height + 20,
-                CommonConstants.FRAME_SIZE.width, hiddenWordLabel.getPreferredSize().height);
+        hiddenWordLabel.setOpaque(true);
+        hiddenWordLabel.setBounds(480, categoryLabel.getY() + 50,
+                categoryLabel.getWidth(), categoryLabel.getHeight());
         hiddenWordLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
+        hiddenWordLabel.setBackground(CommonConstants.BACKGROUND_COLOR);
         getContentPane().add(hiddenWordLabel);
+        hiddenWordLabel.setVisible(true);
         buttonPanel.setVisible(true);
 
     }
@@ -95,50 +105,84 @@ public class Hangman extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
 
+        // all the logic behind pressing buttons based on simple String command which gets its value from the String on button
+
+
+        // menu loop, lets you play with language and difficulty parameters, flag is set to false after pressing PLAY so it breaks out of the menu loop
         do {
             if (command.equals("Play")){
                 menuPanel.setVisible(false);
                 addUiComponents();
+                if (!categoryOffButton.isEnabled()){
+                    categoryLabel.setVisible(false);
+                }
                 flag = false;
                 playButton.setEnabled(true);
+                pack();
                 break;
             }
             if (command.equals("Easy")){
                 easyButton.setEnabled(false);
+                easyButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                 mediumButton.setEnabled(true);
                 hardButton.setEnabled(true);
                 diff = "Easy";
+                hardButton.setBorder(UIManager.getBorder("Button.border"));
+                mediumButton.setBorder(UIManager.getBorder("Button.border"));
                 break;
 
             } else if (command.equals("Medium")){
                 mediumButton.setEnabled(false);
+                mediumButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                 hardButton.setEnabled(true);
                 easyButton.setEnabled(true);
+                hardButton.setBorder(UIManager.getBorder("Button.border"));
+                easyButton.setBorder(UIManager.getBorder("Button.border"));
                 diff = "Medium";
                 break;
             } else if (command.equals("Hard")){
                 hardButton.setEnabled(false);
+                hardButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                 diff = "Hard";
                 mediumButton.setEnabled(true);
                 easyButton.setEnabled(true);
+                mediumButton.setBorder(UIManager.getBorder("Button.border"));
+                easyButton.setBorder(UIManager.getBorder("Button.border"));
                 break;
             } else if (command.equals("Quit")){
                 dispose();
                 return;
             } else if (command.equals("Polish")){
                 polishButton.setEnabled(false);
+                polishButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                 language = "Polish";
                 englishButton.setEnabled(true);
+                englishButton.setBorder(UIManager.getBorder("Button.border"));
                 break;
             } else if (command.equals("English")){
                 englishButton.setEnabled(false);
+                englishButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                 language = "English";
+                polishButton.setBorder(UIManager.getBorder("Button.border"));
                 polishButton.setEnabled(true);
+                break;
+            } else if (command.equals("No category")){
+                categoryOffButton.setEnabled(false);
+                categoryOffButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+                categoryOnButton.setEnabled(true);
+                categoryOnButton.setBorder(UIManager.getBorder("Button.border"));
+                break;
+            } else if (command.equals("With category")){
+                categoryOnButton.setEnabled(false);
+                categoryOnButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+                categoryOffButton.setEnabled(true);
+                categoryOffButton.setBorder(UIManager.getBorder("Button.border"));
                 break;
             }
 
         } while (flag);
 
+            // reset and exit buttons
             if (command.equals("Reset") || command.equals("Restart")) {
                 resetGame();
                 flag = true;
@@ -151,6 +195,7 @@ public class Hangman extends JFrame implements ActionListener {
             } else if (flag == false) {
                 // disable button if once pressed
                 JButton button = (JButton) e.getSource();
+                // excluding PLAY button from being set to disabled after pressing
                 if (!command.equals("Play")){
                 button.setEnabled(false);
                 }
@@ -159,6 +204,7 @@ public class Hangman extends JFrame implements ActionListener {
                 if (wordChallange[1].contains(command)) {
                     // right guess
                     button.setBackground(Color.GREEN);
+                    // breaking hidden word to char array so we can check if picked from the button letter equals any letter in hidden word
                     char[] hiddenWord = hiddenWordLabel.getText().toCharArray();
 
                     for (int i = 0; i < wordChallange[1].length(); i++) {
@@ -170,16 +216,21 @@ public class Hangman extends JFrame implements ActionListener {
 
                     // update hidden word label
                     hiddenWordLabel.setText(String.valueOf(hiddenWord));
-
+                    hiddenWordLabel.setPreferredSize(new Dimension(categoryLabel.getWidth(), categoryLabel.getHeight()));
+                    // checking if hiddenWordLabel contains any * left, if it doesn't it means round is won
                     if (!hiddenWordLabel.getText().contains("*")) {
                         // word is guessed, display the text
-                        resultLabel.setText("Pogchamp, you did it poggers x)");
+                        if (language == "English"){
+                            resultLabel.setText("Ayyy, you did it!");
+                        } else if (language == "Polish"){
+                            resultLabel.setText("Brawo kamracie, dobra robota, zwycięstwo!");
+                        }
                         resultDialog.setVisible(true);
                     }
 
 
                 } else {
-
+                    // calculating mistakes value based on difficulty level
                     if (diff == "Easy"){
                         // wrong guess
                         if (command.equals("Play")) {
@@ -189,42 +240,56 @@ public class Hangman extends JFrame implements ActionListener {
                             CustomTools.updateImage(hangmanImage, "resources/" + (incorrectGuesses + 1) + ".png");
                         }
                     } else if (diff == "Medium"){
+                        // wrong guess
                         if (command.equals("Play")) {} else {
                             button.setBackground(Color.RED);
                             incorrectGuesses += 2;
                             if (incorrectGuesses >= 2 && incorrectGuesses < 4) {
-                                CustomTools.updateImage(hangmanImage, "resources/" + (incorrectGuesses + 2) + ".png");
+                                CustomTools.updateImage(hangmanImage, "resources/3.png");
                             } else if (incorrectGuesses >= 4 && incorrectGuesses < 6) {
-                                CustomTools.updateImage(hangmanImage, "resources/" + (incorrectGuesses + 1) + ".png");
-                            } else if (incorrectGuesses > 6) {
-                                CustomTools.updateImage(hangmanImage, "resources/" + (incorrectGuesses + 1) + ".png");
+                                CustomTools.updateImage(hangmanImage, "resources/5.png");
+                            } else if (incorrectGuesses > 5) {
+                                CustomTools.updateImage(hangmanImage, "resources/7.png");
                             }
 
                         }
                     } else if (diff == "Hard"){
+                        // wrong guess
                         if (command.equals("Play")) {} else {
                             button.setBackground(Color.RED);
                             incorrectGuesses += 3;
                             if (incorrectGuesses >= 3 && incorrectGuesses < 4) {
-                                CustomTools.updateImage(hangmanImage, "resources/" + (incorrectGuesses + 2) + ".png");
+                                CustomTools.updateImage(hangmanImage, "resources/4.png");
                             } else if (incorrectGuesses > 3){
-                                CustomTools.updateImage(hangmanImage, "resources/" + (incorrectGuesses + 1) + ".png");
+                                CustomTools.updateImage(hangmanImage, "resources/7.png");
                             }
                         }
                     }
-
+                    // losing condition
                     if (incorrectGuesses >= 6) {
-                        resultLabel.setText("Rip in peace bro x.x");
+                        if (language == "English") {
+                            resultLabel.setText("Rip in peace, YOU DIED!");
+                        } else if (language == "Polish"){
+                            resultLabel.setText("Bardzo się starałeś, lecz z gry wyleciałeś!");
+                        }
                         resultDialog.setVisible(true);
                     }
                 }
-                wordLabel.setText("Word: " + wordChallange[1]);
+                // setting hidden word for pop-up
+                if (language == "English"){
+                    wordLabel.setText("Word: " + wordChallange[1]);
+                } else if (language == "Polish"){
+                    wordLabel.setText("Słowo: " + wordChallange[1]);
+                }
             }
     }
 
 
 
         private void createResultText () {
+
+            // method used to create window pop-ups
+
             resultDialog = new JDialog();
             resultDialog.setTitle("Result");
             resultDialog.setSize(CommonConstants.RESULT_DIALOG_SIZE);
@@ -234,6 +299,7 @@ public class Hangman extends JFrame implements ActionListener {
             resultDialog.setModal(true);
             resultDialog.setLayout(new GridLayout(3, 1));
             resultDialog.addWindowListener(new WindowAdapter() {
+                // overriding this method resets the game when the pop-up is closed
                 @Override
                 public void windowClosing(WindowEvent e) {
                     resetGame();
@@ -260,6 +326,8 @@ public class Hangman extends JFrame implements ActionListener {
 
         public void resetGame () {
 
+            // resetting necessary stuff and setting some parameters to defaults
+
              buttonPanel.setVisible(false);
              hangmanImage.setVisible(false);
              categoryLabel.setVisible(false);
@@ -268,8 +336,10 @@ public class Hangman extends JFrame implements ActionListener {
              language = "English";
              diff = "Easy";
              setPanelEnabled(menuPanel, true);
+            setMenuButtonsBordersDefault();
 
-             
+
+
             // setting flag to true so menu loops works again
             flag = true;
 
@@ -277,7 +347,7 @@ public class Hangman extends JFrame implements ActionListener {
             wordChallange = wordDataBase.loadChallange();
             incorrectGuesses = 0;
 
-            //load starting image
+            // load starting image
             CustomTools.updateImage(hangmanImage, CommonConstants.IMAGE_PATH);
 
             // update category
@@ -295,6 +365,11 @@ public class Hangman extends JFrame implements ActionListener {
         }
     public void printMenu(){
 
+
+             UIManager.put("Button.disabledText", new ColorUIResource(Color.RED));
+
+            // creating all the buttons and panels for the main menu
+
             playButton = new JButton("Play");
             easyButton = new JButton("Easy");
             mediumButton = new JButton("Medium");
@@ -302,6 +377,8 @@ public class Hangman extends JFrame implements ActionListener {
             quitButton = new JButton("Quit");
             englishButton = new JButton("English");
             polishButton = new JButton("Polish");
+            categoryOffButton = new JButton("No category");
+            categoryOnButton = new JButton("With category");
 
 
             ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -342,7 +419,19 @@ public class Hangman extends JFrame implements ActionListener {
             englishButton.setForeground(Color.WHITE);
             englishButton.setBackground(CommonConstants.BACKGROUND_COLOR);
             englishButton.addActionListener(this);
-            englishButton.setToolTipText("<html> Sets the language for the words and categories as English. This setting is set as default.");
+            englishButton.setToolTipText("<html> Sets the language for the words and categories as English. This setting is set as default. </html>");
+
+            categoryOnButton.setForeground(Color.WHITE);
+            categoryOnButton.setBackground(CommonConstants.BACKGROUND_COLOR);
+            categoryOnButton.addActionListener(this);
+            categoryOnButton.setToolTipText("<html> Enables category visibility for the hidden word, makes it easier to guess. </html");
+
+            categoryOffButton.setForeground(Color.WHITE);
+            categoryOffButton.setBackground(CommonConstants.BACKGROUND_COLOR);
+            categoryOffButton.addActionListener(this);
+            categoryOffButton.setToolTipText("<html> Disables category visibility. </html>");
+
+
 
             GridLayout diffLayout = new GridLayout(1, 3);
             JPanel diffPanel = new JPanel();
@@ -361,22 +450,31 @@ public class Hangman extends JFrame implements ActionListener {
             languagePanel.add(englishButton);
             languagePanel.add(polishButton);
 
-            GridLayout gridLayout = new GridLayout(4, 1);
+            GridLayout categoryLayout = new GridLayout(1,2);
+            JPanel categoryPanel = new JPanel();
+            categoryPanel.setBounds((int) (CommonConstants.FRAME_SIZE.width * 0.5), (int) (CommonConstants.FRAME_SIZE.height * 1),
+                (int) (CommonConstants.FRAME_SIZE.width * 0.5), 30);
+            categoryPanel.setLayout(categoryLayout);
+            categoryPanel.add(categoryOnButton);
+            categoryPanel.add(categoryOffButton);
+
+            GridLayout gridLayout = new GridLayout(5, 1);
             menuPanel = new JPanel();
-            menuPanel.setBounds((int) (CommonConstants.FRAME_SIZE.width * 0.25), 500,
-                    CommonConstants.BUTTON_PANEL_SIZE.width, CommonConstants.BUTTON_PANEL_SIZE.height);
+            menuPanel.setSize(960, 540);
             menuPanel.setLayout(gridLayout);
             menuPanel.add(playButton);
             menuPanel.add(diffPanel);
             menuPanel.add(languagePanel);
+            menuPanel.add(categoryPanel);
             menuPanel.add(quitButton);
-            menuPanel.setLocation(700, 350);
-            menuPanel.setAlignmentY(SwingConstants.CENTER);
+            menuPanel.setLocation(480, 270);
+            menuPanel.setOpaque(false);
+            diffPanel.setOpaque(false);
             add(menuPanel);
 
      }
      public void printButtons(){
-         // buttons
+         // letter buttons
          GridLayout gridLayout = new GridLayout(4, 7);
          buttonPanel.setBounds((int) (CommonConstants.FRAME_SIZE.width * 0.25),700,
                  CommonConstants.BUTTON_PANEL_SIZE.width, CommonConstants.BUTTON_PANEL_SIZE.height);
@@ -414,6 +512,12 @@ public class Hangman extends JFrame implements ActionListener {
      }
 
     public void setPanelEnabled(Container cont, Boolean isEnabled) {
+
+        // this method enables all the elements of the container, e.g. menuPanel has button components and they
+        // gonna be set to method parameter isEnabled
+        // additionally loop checks for internal containers and their components
+        // method used when reseting the game to set all the buttons in menu to enabled
+
         cont.setEnabled(isEnabled);
 
         Component[] components = cont.getComponents();
@@ -424,5 +528,21 @@ public class Hangman extends JFrame implements ActionListener {
             }
             components[i].setEnabled(isEnabled);
         }
+    }
+    public void setMenuButtonsBordersDefault(){
+        ArrayList<JButton> menuButtons = new ArrayList<JButton>();
+        menuButtons.add(playButton);
+        menuButtons.add(easyButton);
+        menuButtons.add(mediumButton);
+        menuButtons.add(hardButton);
+        menuButtons.add(englishButton);
+        menuButtons.add(polishButton);
+        menuButtons.add(categoryOffButton);
+        menuButtons.add(categoryOnButton);
+
+        for(JButton button : menuButtons){
+            button.setBorder(UIManager.getBorder("Button.border"));
+        }
+        UIManager.put("Button.enabledText", new ColorUIResource(Color.WHITE));
     }
 }

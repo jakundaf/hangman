@@ -21,7 +21,7 @@ public class WordDataBase {
             ENGcategories = new ArrayList<>();
             PLwordList = new HashMap<>();
             PLcategories = new ArrayList<>();
-            int lineCounter = 0;
+            int lineCounter = 1;
 
             // get file path
             String filePath = getClass().getClassLoader().getResource(CommonConstants.DATA_PATH).getPath();
@@ -29,9 +29,15 @@ public class WordDataBase {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
 
             // iterates through each line in the data.txt
+
+            // added lineCounter to separate english from polish words in data.txt
+            // the first 3 lines so 0, 1 ,2 are english version
+            // other ones are for polish
+            // so simple if statement works there
+
             String line;
             while ((line = reader.readLine()) != null) {
-                if (lineCounter < 3) {
+                if (lineCounter < 4) {
                 // splits the data.txt by ","
                 String[] parts = line.split(",");
 
@@ -63,6 +69,10 @@ public class WordDataBase {
 
     public String[] loadChallange() {
         Random rand = new Random();
+
+        // at first i created the method for only english language, later on i wanted to develop the game so it works on both polish and english
+        // simply just copied vars made PL and ENG version then just added if statement
+        // each pair of the vars ENG and PL stories their equivalents in specified language
 
         if (Hangman.language == "English") {
             // generate random number to choose category
